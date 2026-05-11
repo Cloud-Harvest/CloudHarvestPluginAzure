@@ -11,7 +11,7 @@ include = [
 [project]
 authors = [ { name = "Cloud Harvest" } ]
 classifiers = [
-    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Intended Audience :: Site Reliability Engineers",
 ]
 dependencies = [
@@ -20,8 +20,6 @@ dependencies = [
     "configparser",
     "Flask",
     "PyYAML",
-    "boto3",
-    "botocore",
     "flatten-json",
     "pexpect",
     "pymongo",
@@ -29,13 +27,17 @@ dependencies = [
     "requests",
     "rich",
     "rich-argparse",
-    "setuptools"
+    "setuptools",
+    # Azure SDK packages
+    # Unlike the AWS boto3 package, Azure's SDK is highly modular, so we must explicitly list each corresponding service
+    # package here. Find the SDK list here: https://azure.github.io/azure-sdk/releases/latest/all/python.html
+    "azure-mgmt-postgresqlflexibleservers"
 ]
 description = "This is the Azure Plugin for CloudHarvest."
 name = "CloudHarvestPluginAzure"
 readme = "README.md"
-requires-python = ">=3.13"
-version = "0.6.0"
+requires-python = ">=3.14"
+version = "0.0.1"
 
 [project.license]
 file = "LICENSE"

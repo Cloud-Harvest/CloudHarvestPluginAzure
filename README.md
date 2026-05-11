@@ -7,11 +7,11 @@ This repository contains the Azure plugin for the CloudHarvest API. This plugin 
 # Documentation
 In addition to the [CHANGELOG](CHANGELOG.md) and [LICENSE](LICENSE), this repository contains the following documentation:
 
-| Topic                                                          | Description                                                          |
-|----------------------------------------------------------------|----------------------------------------------------------------------|
-| [Reports](CloudHarvestPluginAzure/templates/reports/README.md)   | Overview of the report format and how to write new reports.          |
+| Topic                                                            | Description                                                            |
+|------------------------------------------------------------------|------------------------------------------------------------------------|
+| [Reports](CloudHarvestPluginAzure/templates/reports/README.md)   | Overview of the report format and how to write new reports.            |
 | [Services](CloudHarvestPluginAzure/templates/services/README.md) | Describes the Azure services collected and how to author new services. |
-| [Tasks](CloudHarvestPluginAzure/tasks/README.md)                 | Coverts the new Tasks associated with this plugin.                   |
+| [Tasks](CloudHarvestPluginAzure/tasks/README.md)                 | Coverts the new Tasks associated with this plugin.                     |
 
 # License
 Shield: [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
