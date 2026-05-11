@@ -1,0 +1,44 @@
+[build-system]
+requires = ["flit-core>=3.7"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.sdist]
+include = [
+    "templates/**/*.yaml",
+    "pyproject.toml",
+]
+
+[project]
+authors = [ { name = "Cloud Harvest" } ]
+classifiers = [
+    "Programming Language :: Python :: 3.13",
+    "Intended Audience :: Site Reliability Engineers",
+]
+dependencies = [
+    "CloudHarvestCoreTasks @ git+https://github.com/Cloud-Harvest/CloudHarvestCoreTasks.git@0.9.0",
+    "cmd2",
+    "configparser",
+    "Flask",
+    "PyYAML",
+    "boto3",
+    "botocore",
+    "flatten-json",
+    "pexpect",
+    "pymongo",
+    "pytest",
+    "requests",
+    "rich",
+    "rich-argparse",
+    "setuptools"
+]
+description = "This is the Azure Plugin for CloudHarvest."
+name = "CloudHarvestPluginAzure"
+readme = "README.md"
+requires-python = ">=3.13"
+version = "0.6.0"
+
+[project.license]
+file = "LICENSE"
+
+[project.urls]
+homepage = "https://github.com/Cloud-Harvest/CloudHarvestPluginAzure"

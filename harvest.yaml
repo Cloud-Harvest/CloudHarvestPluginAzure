@@ -1,0 +1,40 @@
+# Description: Configuration file for Harvest
+#
+# Authentication Configuration
+#   auth:
+#     method: The authentication method to use. Valid values are 'iam', 'file', and 'saml2azure'.
+#       iam: (default) Use the Azure SDK to assume roles. In this preferred configuration, the container/EC2 running the
+#            API should have an IAM role with the necessary permissions to assume roles in the
+#            target accounts.
+#       saml2azure: Use the saml2azure CLI to assume roles. This is useful when the API is running in a local development
+#                 environment or when you wish to use the Harvest API to provision Azure credentials for users.
+#                 Note that this will require passing valid Azure user credentials to saml2azure. It may also require the
+#                 user to authenticate with an identity provider.
+#                 Furthermore, the saml2azure.config file must be configured with the necessary SAML configuration.
+
+#   accounts: A map of Azure account IDs to role names to assume during data collection.
+#   auth_method: The authentication method to use. Valid values are 'iam' and 'saml2azure'.
+#
+#     -
+#
+#     - file: Use a file to store Azure credentials. The method assumes the operator will provide credentials accessible
+#             in the file path provided.
+#
+#   auth_args: A map of arguments to pass to the authentication method. The arguments are specific to the
+#              authentication method. For 'iam', the only argument is 'role_name'. For 'saml2azure', the arguments are
+#   enable_saml2azure: (false, default) A boolean value indicating whether to allow the /azure/auth/saml2azure route. If set to true, the
+#                    Harvest API will allow users to authenticate with SAML to provision their Azure credentials.
+
+api-plugin-azure:
+  accounts:
+    "123456789012": role-name
+
+  auth:
+    # The authentication method to use. Valid values are 'iam', 'file', and 'saml2azure'.
+    method: file
+
+    # The arguments to pass to the authentication method.
+    args:
+      path: ~/.azure/credentials
+
+enable_saml2azure_endpoint: false

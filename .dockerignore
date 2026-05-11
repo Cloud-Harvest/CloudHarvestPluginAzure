@@ -1,0 +1,4 @@
+**/.git
+**/.harvest
+**/venv
+poetry.lock
