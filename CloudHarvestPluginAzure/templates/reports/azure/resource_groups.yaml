@@ -1,0 +1,28 @@
+report:
+  name: reports.azure.resource_groups
+  description: Generates a list of all Azure resource groups.
+  headers:
+    - Id
+    - Name
+    - Location
+
+  tasks:
+    - azure:
+        name: Retrieve information on Azure resource groups
+        command: "azure.mgmt.resource:ResourceManagementClient.resource_groups.list"
+        arguments:
+          subscription_id: var.subscription_id
+        type: resource_group
+#        paginator_method: as_dict    # default
+        result_as: azure_resource_groups
+
+    - dataset:
+        name: modify the result
+        data: var.azure_resource_groups
+        result_as: result
+        filters: '.*'
+        stages:
+          - title_keys:   # convert lower case keys to TitleCase
+          - copy_key:
+              source_key: Location
+              target_key: Region    # for compatibility with other cloud providers

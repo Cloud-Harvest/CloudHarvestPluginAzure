@@ -4,14 +4,13 @@ from azure.mgmt.subscription.models import Subscription
 from azure.mgmt.resource import ResourceManagementClient
 
 
-
 class CachedSubscriptions:
     subscriptions = {}
+    refresh_thread = None
 
     @staticmethod
     def get_all_subscriptions() -> dict:
         # Generates an index of Azure subscriptions by id and their associated resource groups.
-
         results = {}
 
         # Generate a list of subscriptions using the local credentials
@@ -40,5 +39,32 @@ class CachedSubscriptions:
             )
 
         CachedSubscriptions.subscriptions = results
+        from datetime import datetime
+        CachedSubscriptions.last_collected = datetime.now()
+
+        if CachedSubscriptions.refresh_thread is None:
+            from threading import Thread
+            CachedSubscriptions.refresh_thread = Thread(target=CachedSubscriptions.get_all_subscriptions, daemon=True)
 
         return results
+
+    @staticmethod
+    def get_subscription(subscription_id: str) -> Subscription | None:
+        """
+        Safely returns a Subscription object if it exists.
+        :param subscription_id: The subscription ID to look up.
+        :return: Subscription object or None.
+        """
+        if CachedSubscriptions.subscriptions.get(subscription_id):
+            return CachedSubscriptions.subscriptions[subscription_id]['subscription']
+
+        else:
+            return None
+
+    @staticmethod
+    def _refresh_thread():
+        from time import sleep
+
+        while True:
+            CachedSubscriptions.get_all_subscriptions()
+            sleep(600)  # Sleep for 10 minutes before refreshing again

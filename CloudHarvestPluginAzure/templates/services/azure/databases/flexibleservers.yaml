@@ -1,0 +1,38 @@
+harvest:
+  name: services.azure.databases.flexibleservers
+  description: Retrieve information about Azure Database for MySQL and PostgreSQL Flexible Servers
+  unique_identifier_keys: DBInstanceArn
+
+#  indexes:
+#    - keys: DBInstanceIdentifier
+#    - keys: DBClusterIdentifier
+#    - keys:
+#        - Engine
+#        - EngineVersion
+#    - keys: Endpoint
+#    - keys: Logs.LogFileName
+#    - keys: Logs.LastWritten
+
+  # tasks to collect all instances
+  tasks:
+    all:
+      - azure:
+          name: Get databases
+          description: Retrieve Azure Databases for MySQL Flexible Servers
+          command: "azure.mgmt.mysqlflexibleservers:MySQLManagementClient.servers.list_by_resource_group"
+          arguments:
+            resource_group_name: var.resource_group_name
+          result_as: mysql_flexible_servers
+
+      - azure:
+          name: Get databases
+          description: Retrieve Azure Databases for PostgreSQL Flexible Servers
+          command: "azure.mgmt.postgresflexibleservers:PostgreSQLManagementClient.servers.list_by_resource_group"
+          arguments:
+            resource_group_name: var.resource_group_name
+          result_as: postgresql_flexible_servers
+
+
+
+    # tasks to collect a single cluster
+    single:
