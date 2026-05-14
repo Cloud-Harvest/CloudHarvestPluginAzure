@@ -1,0 +1,36 @@
+report:
+  name: reports.azure.databases.flexibleservers
+  description: Retrieve information about Azure Flexible Servers
+
+  headers:
+    - Active
+    - Account
+    - Region
+    - ResourceGroup
+    - Name
+    - Version
+    - State
+    - Created
+
+  tasks:
+    - mongo:
+        name: Get Azure Flexible Servers
+        silo: harvest-core
+        collection: azure.databases.flexibleservers
+        filters: '.*'
+
+        arguments:
+        pipeline:
+            - $project:
+                Active: "$Harvest.Active"
+                Account: "$Harvest.Account"
+                Region: "$Harvest.Region"
+                ResourceGroup: "$resourceGroup"
+                Name: "$name"
+                Version:
+                  $concat:
+                    - "$version"
+                    - "."
+                    - "$minorVersion"
+                State: "$state"
+                Created: "$created"
