@@ -28,14 +28,9 @@ dependencies = [
     "rich",
     "rich-argparse",
     "setuptools",
-    # Azure SDK packages
-    # Unlike the AWS boto3 package, Azure's SDK is highly modular, so we must explicitly list each corresponding service
-    # package here. Find the SDK list here: https://azure.github.io/azure-sdk/releases/latest/all/python.html
     "azure-identity",
     "azure-mgmt-subscription",
-    "azure-mgmt-resource",
-    "azure-mgmt-mysqlflexibleservers",
-    "azure-mgmt-postgresqlflexibleservers"
+    "azure-mgmt-resourcegraph"
 ]
 description = "This is the Azure Plugin for CloudHarvest."
 name = "CloudHarvestPluginAzure"
