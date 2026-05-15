@@ -9,6 +9,7 @@ class AzureTask(BaseTask):
     def __init__(self,
                  command: str,
                  arguments: dict = None,
+                 client_arguments: dict = None,
                  service: str = None,
                  type: str = None,
                  account: str = None,
@@ -25,7 +26,8 @@ class AzureTask(BaseTask):
 
         Args:
             command (str): The package and command path to execute for the service.
-            arguments (dict): The arguments to pass to the command. Defaults to empty dictionary.
+            arguments (dict): The arguments to pass to the final command. Defaults to empty dictionary.
+            client_arguments (dict, optional): Arguments to pass to the command's client class.
             service (str, optional): The Azure service to interact with (e.g., 's3', 'ec2'). If not specified, the default is pulled from the task chain variables.
             type (str, optional): The type of the Azure service (e.g., 's3', 'ec2'). If not specified, the default is pulled from the task chain variables.
             account (str, optional): The Azure number to use for the session. If not specified, the default is pulled from the task chain variables.
@@ -51,6 +53,7 @@ class AzureTask(BaseTask):
         # azure sdk configuration
         self.command = command
         self.arguments = arguments or {}
+        self.client_arguments = client_arguments or {}
         self.max_retries = max_retries
 
         # Output manipulation
@@ -83,11 +86,12 @@ class AzureTask(BaseTask):
         # Execute the Azure query
         result = query_azure(
             subscription=self.account,
-            group=self.group,
             command=self.command,
             arguments=self.arguments,
+            client_arguments=self.client_arguments,
             max_retries=self.max_retries,
-            result_path=self.result_path
+            result_path=self.result_path,
+            paginator_method=self.paginator_method
         )
 
         # Add starting metadata to the result
@@ -117,9 +121,10 @@ def query_azure(
         subscription: str,
         command: str,
         arguments: dict,
-        paginator_method: str = None,
-        max_retries: int = None,
-        result_path: str or list or tuple = None
+        client_arguments: dict,
+        paginator_method: str,
+        max_retries: int,
+        result_path
 ) -> WalkableDict:
     """
     Queries Azure for the specified service and command.
@@ -128,10 +133,11 @@ def query_azure(
         subscription (str): The Azure subscription_id to query.
         command (str): The command to execute on the Azure service.
         arguments (dict): The arguments to pass to the command.
-        client (str): The Azure "package-name:ClientClass" to use for the query (e.g., 'azure.mgmt.compute:ComputeManagementClient').
+        client_arguments (dict): The arguments to pass to the command's client class.
+        paginator_method (str): The method to use to paginate results. Default is 'as_dict'.
         credentials (dict, optional): The Azure credentials to use for the session.
         max_retries (int, optional): The maximum number of retries for the command. Defaults to 10.
-        result_path (str, optional): Path to the results. When not provided, the path is the first key that is not 'Marker' or 'NextToken'.
+        result_path (str, optional): Path to the results. When not provided, the path is the object itself.
 
     Returns:
         Any: The result of the Azure query.
@@ -166,7 +172,11 @@ def query_azure(
 
     # The client object allows connection to the Azure API.
     from CloudHarvestPluginAzure.credentials import CachedSubscriptions
-    client = getattr(azure_module, command_class)(credentials=CachedSubscriptions.get_subscription(subscription))
+    # Add the credentials to the client arguments, overriding 'credentials' if provided
+    client_arguments.update({'credentials': CachedSubscriptions.get_subscription(subscription)})
+
+    # Instantiate the client object with the provided arguments.
+    client = getattr(azure_module, command_class)(**client_arguments)
 
     # Set and verify the client's method chain using functools.reduce which walks the entire class_methods chain and
     # returns the last method in sequence.
@@ -236,4 +246,4 @@ def query_azure(
             for path in result_path
         }
 
-    return result
+    return result if isinstance(result, WalkableDict) and result is not None else WalkableDict(result)
